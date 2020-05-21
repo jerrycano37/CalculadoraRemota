@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Calculadora Remota</title>
+  </head>
+  <body>     
+    <nav id="nabvar" class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand">Calculadora Remota</a>
+    </nav>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-6">
+                <div id="total">             
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="contenedorinput" class="container">
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button onclick="ejecutar()" class="btn btn-outline-secondary" type="button">Calcular</button>
+                    </div>
+                    <input id="expresion" type="text" class="form-control" onkeypress="return runScript(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+    <script>
+    var socket = io();
+    var temp;
+        socket.on('alCliente',function(totales){
+            if (totales === true) {
+                alert('Error al calcular la operacion.');
+            } else {
+                document.getElementById('total').innerHTML = '<h1>' + totales + '</h1>';
+            }
+        });
+        
+        function ejecutar(){
+            temp = document.getElementById('expresion').value;
+            if(temp === ""){
+                alert('Por favor ingrese una expresion.');
+            } else{
+                socket.emit('calcular',temp);
+                document.getElementById('expresion').value = "";
+            }
+        }
+        
+        function runScript(e){
+            if (e.keyCode == 13){
+                ejecutar();
+            }
+        }
+    </script>
+</body>
+
+<style>
+    #nabvar {
+        padding-bottom: 20px;
+        color: wheat;
+    }
+
+    #contenedorinput{
+        margin-top: 20px;
+    }
+
+    #total{
+        border: 2px solid;
+        padding: 50px;
+        margin-top: 10px;
+    }
+
+    #total h1{
+        text-align:center;
+    }
+</style>
+
+</html>
